@@ -1,0 +1,28 @@
+<html>
+<head>
+</head>
+<body>
+    {% for i in categories %}
+    <div class="category">
+        <p>{{i.category}}</p>
+
+        {% for j in items %}
+        <div class='nameAndPrice'>
+            <span><p>{{j.name}}</p></span>
+            <span><p>{{j.price}}</p></span>
+        </div>
+
+        <div class='description'>
+            <p>{{j.description}}</p>
+        </div>
+
+        <div class='editDeletePane'>
+            <a href='{{url_for('editMenuItem', category=i.category, item_id=j.id)}}'>Edit</a>
+            <a href='{{url_for('deletMenuItem', category=i.category, item_id=j.id)}}'>Delete</a>
+        </div>
+        {% endfor %}
+
+    </div>
+    {% endfor %}
+</body>
+</html>
