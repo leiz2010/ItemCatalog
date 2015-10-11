@@ -7,11 +7,11 @@ from sqlalchemy import create_engine
 
 Base = declarative_base()
 
-class ItemType(Base)
+class ItemType(Base):
     __tablename__ = 'ItemType'
 
     id = Column(Integer, primary_key=True)
-    category = Column(String(80, nullable=False)
+    category = Column(String(80), nullable=False, unique=True)
 
 
 class MenuItem(Base):
@@ -21,8 +21,8 @@ class MenuItem(Base):
     name = Column(String(80), nullable=False)
     description = Column(String(250))
     price = Column(String(8))
-    menu_category = Column(String, ForeignKey('ItemType.category'))
-    menu = relationship(Meun)
+    category = Column(String, ForeignKey('ItemType.category'))
+    item_type = relationship(ItemType)
 
     @property
     def serialize(self):
@@ -30,7 +30,7 @@ class MenuItem(Base):
             'name': self.name,
             'description': self.description,
             'id': self.id,
-            'price': self.price
+            'price': self.price,
             'menu_category': self.menu_category
         }
 

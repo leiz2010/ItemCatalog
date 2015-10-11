@@ -1,4 +1,7 @@
-from flask import Flask, render_template, jsonify
+from flask import Flask, render_template, request, url_for, flash, jsonify
+from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker
+from database_setup import Base, ItemType, MenuItem
 
 app = Flask(__name__)
 
@@ -18,12 +21,12 @@ def menu():
     return render_template('menu.html', categories=categories, items=items);
 
 
-@app.route('/menu/<String:category>/new/',
+@app.route('/menu/<string:category>/new/',
         methods=['GET', 'POST'])
 def newMenuItem(category):
     # Add new menu item to this category type
     if request.method == 'POST':
-        newItem = MenuItem(name=request.form['name'], menu_category=category)
+        newItem = MenuItem(name=request.form['name'], category=category)
         session.add(newItem)
         session.commit()
         flash("new menu item created")
@@ -32,7 +35,7 @@ def newMenuItem(category):
         return render_template('newitem.html', category=category)
 
 
-@app.route('/menu/<String:category>/<int:item_id>/edit/',
+@app.route('/menu/<string:category>/<int:item_id>/edit/',
         methods=['GET', 'POST'])
 def editMenuItem(category, item_id):
     # Edit menu item in this category type
@@ -48,7 +51,7 @@ def editMenuItem(category, item_id):
         return render_template('editeitem.html', category=category, item=editedItem)
 
 
-@app.route('/menu/<String:category>/<int:item_id>/delete/',
+@app.route('/menu/<string:category>/<int:item_id>/delete/',
         methods=['GET', 'POST'])
 def deletMenuItem(category, item_id):
     # Delete this menu item in this category type
