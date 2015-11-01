@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, url_for, flash, jsonify
+from flask import Flask, render_template, request, redirect, url_for, flash, jsonify
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from database_setup import Base, ItemType, MenuItem
@@ -30,7 +30,7 @@ def newMenuItem(category):
         session.add(newItem)
         session.commit()
         flash("new menu item created")
-        return redirect(url_for('meun'))
+        return redirect(url_for('menu'))
     else:
         return render_template('newitem.html', category=category)
 
@@ -43,25 +43,36 @@ def editMenuItem(category, item_id):
     if request.method == 'POST':
         if request.form['name']:
             editedItem.name = request.form['name']
+        if request.form['category']:
+            editedItem.category = request.form['category']
+        if request.form['description']:
+            editedItem.description = request.form['description']
+        if request.form['price']:
+            editedItem.price = request.form['price']
         session.add(editedItem)
         session.commit()
         flash("Menu item edited")
         return redirect(url_for('menu'))
     else:
-        return render_template('editeitem.html', category=category, item=editedItem)
+        return render_template('edititem.html', category=category, item=editedItem)
 
 
 @app.route('/menu/<string:category>/<int:item_id>/delete/',
         methods=['GET', 'POST'])
-def deletMenuItem(category, item_id):
+def deleteMenuItem(category, item_id):
+    print "this is delete item ID: " + str(item_id)
     # Delete this menu item in this category type
     deleteItem = session.query(MenuItem).filter_by(id=item_id).one()
+    print "this is delete item: " + deleteItem.name
+    print "this is request method: " + request.method
     if request.method == 'POST':
+        print "Entered POST condition"
         session.delete(deleteItem)
         session.commit()
-        flash("Menu item deleted")
+        #flash("Menu item deleted")
         return redirect(url_for('menu'))
     else:
+        print "Entered GET condition"
         return render_template('deleteitem.html', item=deleteItem)
 
 
