@@ -31,7 +31,7 @@ def newMenuItem(category):
             category=category)
         session.add(newItem)
         session.commit()
-        flash("new menu item created")
+        flash("New menu item created")
         return redirect(url_for('menu'))
     else:
         return render_template('newitem.html', category=category)
@@ -68,7 +68,7 @@ def deleteMenuItem(category, item_id):
         print "Entered POST condition"
         session.delete(deleteItem)
         session.commit()
-        #flash("Menu item deleted")
+        flash("Menu item deleted")
         return redirect(url_for('menu'))
     else:
         return render_template('deleteitem.html', item=deleteItem)

@@ -10,6 +10,16 @@
 <div class="container">
     <div class="row">
         <h1 class="text-center">Yatta Teriyaki</h1>
+        {% with messages = get_flashed_messages() %}
+        {% if messages %}
+
+        <ul>
+        {% for message in messages %}
+          <li><strong>{{message}}</strong></li>
+          {% endfor %}
+        </ul>
+        {% endif %}
+        {% endwith %}
         <hr></hr>
     </div>
 
