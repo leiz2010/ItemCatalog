@@ -1,16 +1,27 @@
-<html>
+<!DOCTYPE html>
+<html lang="en">
 <head>
+  <title>Yatta Teriyaki</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
 </head>
 <body>
+    <div class="row text-center">
     <h1> New Menu Item </h1>
     <div class='pane'>
-        <form action="{{url_for('newMenuItem', category=category)}}" method="POST">
+        <form role="form" action="{{url_for('newMenuItem', category=category)}}" method="POST">
         <dl>
             <dt>Name:</dt>
-            <dd><input type='text' size='30' name='name'></dd>
+                <dd><input type='text' size='30' name='name'></dd>
+            <dt>Description:</dt>
+                <dd><textarea name='description' row='5' color='40'></textarea></dd>
+            <dt>Price</dt>
+                <dd><input type= 'text' size='8' name='price'></dd>
         </dl>
-        <input type='submit' value='Create'>
+        <input type='submit' class="btn btn-success btn-lg" value='Create'>
         </form>
+    </div>
     </div>
 </body>
 </html>

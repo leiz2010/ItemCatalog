@@ -11,9 +11,8 @@ Base.metadata.bind = engine
 DBSession = sessionmaker(bind=engine)
 session = DBSession()
 
-
 @app.route('/')
-@app.route('/menu')
+@app.route('/menu/')
 def menu():
     # Display all menu items
     categories = session.query(ItemType).all()
@@ -26,7 +25,10 @@ def menu():
 def newMenuItem(category):
     # Add new menu item to this category type
     if request.method == 'POST':
-        newItem = MenuItem(name=request.form['name'], category=category)
+        newItem = MenuItem(name=request.form['name'],
+            description=request.form['description'],
+            price=request.form['price'],
+            category=category)
         session.add(newItem)
         session.commit()
         flash("new menu item created")
@@ -60,11 +62,8 @@ def editMenuItem(category, item_id):
 @app.route('/menu/<string:category>/<int:item_id>/delete/',
         methods=['GET', 'POST'])
 def deleteMenuItem(category, item_id):
-    print "this is delete item ID: " + str(item_id)
     # Delete this menu item in this category type
     deleteItem = session.query(MenuItem).filter_by(id=item_id).one()
-    print "this is delete item: " + deleteItem.name
-    print "this is request method: " + request.method
     if request.method == 'POST':
         print "Entered POST condition"
         session.delete(deleteItem)
@@ -72,7 +71,6 @@ def deleteMenuItem(category, item_id):
         #flash("Menu item deleted")
         return redirect(url_for('menu'))
     else:
-        print "Entered GET condition"
         return render_template('deleteitem.html', item=deleteItem)
 
 
