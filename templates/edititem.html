@@ -7,49 +7,79 @@
   <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
 </head>
 <body>
-    <h1> Edit Menu Item </h1>
+    <div class="container">
+        <div class="col-md-4"></div>
+        <div class="col-md-4">
+        <h1 class="text-center"> Edit Menu Item </h1>
+        <hr></hr>
 
-    <form action="{{url_for('editMenuItem', category=category, item_id=item.id)}}" method='POST'>
-    <dl>
-        <dt>Name:</dt>
-            <dd><input type='text' size='30' name='name' placeholder='{{item.name}}'></dd>
-        <dt>Description:</dt>
-            <dd><textarea name='description' row='5' color='40' placeholder='{{item.description}}'></textarea></dd>
-        <dt>Price</dt>
-            <dd><input type= 'text' size='8' name='price' placeholder='{{item.price}}'></dd>
-        <dt>Course:</dt>
+        <form role="form" action="{{url_for('editMenuItem', category=category, item_id=item.id)}}" method='POST'>
+            <div class="form-group">
+                <label for="name">Name:</label>
+                    <input type='text' class="form-control" size='30' name='name' placeholder='{{item.name}}'>
+            </div>
 
-        {% if item.category == 'Appetizer' %}
-            <dd><input type='radio' name='category'
-                value='Appetizer' checked />Appetizer</dd>
-        {% else %}
-        <dd><input type='radio' name='category' value='Appetizer'>Appetizer</dd>
-        {% endif %}
+            <div class="form-group">
+                <label for="description">Description:</label>
+                    <textarea name='description' class="form-control" row='5' color='40' placeholder='{{item.description}}'></textarea>
+            </div>
 
-        {% if item.category == 'Entree' %}
-            <dd><input type='radio' name='category'
-                value='Entree' checked />Entree</dd>
-        {% else %}
-            <dd><input type='radio' name='category' value='Entree'>Entree</dd>
-        {% endif %}
+            <div class="form-group">
+                <label for="name">Price</label>
+                    <input type= 'text' class="form-control" size='8' name='price' placeholder='{{item.price}}'>
+            </div>
 
-        {% if item.category == 'Dessert' %}
-            <dd><input type='radio' name='category'
-                value='Dessert' checked />Dessert</dd>
-        {% else %}
-            <dd><input type='radio' name='category' value='Dessert'>Dessert</dd>
-        {% endif %}
+            <div clas="form-group">
+                <lable for="Course"><b>Course:</b></label>
+                {% if item.category == 'Appetizer' %}
+                <div class="radio form-control">
+                    <label><input type='radio' name='category' value='Appetizer' checked />Appetizer</label>
+                </div>
+                {% else %}
+                <div class="radio form-control">
+                    <label><input type='radio' name='category' value='Appetizer'>Appetizer</label>
+                </div>
+                {% endif %}
 
-        {% if item.category == 'Beverage' %}
-            <dd><input type='radio' name='category'
-                value='Beverage' checked />Beverage</dd>
-        {% else %}
-            <dd><input type='radio' name='category' value='Beverage'>Beverage</dd>
-        {% endif %}
-    </dl>
-    <input type='submit' value='Save'>
+                {% if item.category == 'Entree' %}
+                <div class="radio form-control">
+                    <label><input type='radio' name='category' value='Entree' checked />Entree</label>
+                </div>
+                {% else %}
+                <div class="radio form-control">
+                    <label><input type='radio' name='category' value='Entree'>Entree</label>
+                </div>
+                {% endif %}
 
-    <a href="{{url_for('menu')}}">Cancel</a>
-    </form>
+                {% if item.category == 'Dessert' %}
+                <div class="radio form-control">
+                    <label><input type='radio' name='category'value='Dessert' checked />Dessert</label>
+                </div>
+                {% else %}
+                <div class="radio form-control">
+                    <label><input type='radio' name='category' value='Dessert'>Dessert</label>
+                </div>
+                {% endif %}
+
+                {% if item.category == 'Beverage' %}
+                <div class="radio form-control">
+                    <label><input type='radio' name='category'value='Beverage' checked />Beverage</label>
+                </div>
+                {% else %}
+                <div class="radio form-control">
+                    <label><input type='radio' name='category' value='Beverage'>Beverage</label>
+                </div>
+                {% endif %}
+            </div>
+            <hr/>
+            <div class="form-group">
+                <input type='submit' class="btn btn-success btn-lg btn-block", value='Save'>
+            </div>
+
+            <a href="{{url_for('menu')}}"><button type="button" class="btn btn-default btn-lg btn-block">Cancel</button></a>
+        </form>
+        </div>
+        <div class="col-md-4"></div>
+    </div>
 </body>
 </html>
