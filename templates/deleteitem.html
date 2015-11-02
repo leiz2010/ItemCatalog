@@ -1,14 +1,26 @@
-<html>
+<!DOCTYPE html>
+<html lang="en">
 <head>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Yatta Teriyaki</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
 </head>
 <body>
-    <h1> Are you sure you want to delete {{item.name}}?</h1>
+    <div class="container text-center">
+        <div class="col-md-4"></div>
+        <div class="col-md-4">
+        <h2> Are you sure you want to delete <span ><h1>{{item.name}}</h1></span>?</h2>
 
-    <form action="{{url_for('deleteMenuItem', category=item.category, item_id=item.id)}}" method='POST'>
-    <input type='submit', value='Delete'>
-    </form>
+        <form role="form" action="{{url_for('deleteMenuItem', category=item.category, item_id=item.id)}}" method='POST'>
+            <div class="form-group">
+                <input type='submit', class="btn btn-danger btn-lg btn-block", value='Delete'>
+            </div>
+        </form>
 
-    <a href="{{url_for('menu')}}"> Cancel </a>
+        <a href="{{url_for('menu')}}"><button type="button" class="btn btn-default btn-lg btn-block"> Cancel </button></a>
+        </div>
+        <div class="col-md-4"></div>
+    </div>
 </body>
 </html>
