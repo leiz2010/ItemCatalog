@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+	<author>
+		<name>Lei Zhang</name>
+	</author>
+	<title type="text">Menu Items</title>
+	{% for item in items %}
+	<entry>
+		<name type="text">{{item.name}}</name>
+        <id type="xs:integer">{{item.id}}</id>
+        <category type="text">{{item.category}}</category>
+        <description type="text">{{item.description}}</description>
+        <price type="xs:decimal">{{item.price}}</price>
+	</entry>
+	{% endfor %}
+</feed>

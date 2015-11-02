@@ -11,6 +11,26 @@ Base.metadata.bind = engine
 DBSession = sessionmaker(bind=engine)
 session = DBSession()
 
+# XML for the entire menu
+@app.route('/menu/XML')
+def menuXML():
+    items = session.query(MenuItem).all()
+    return render_template('menu.xml', items=items)
+
+# Json for the entire menu
+@app.route('/menu/JSON/')
+def menuJSON():
+    items = session.query(MenuItem).all()
+    return jsonify(MenuItems=[i.serialize for i in items])
+
+# Json endpoint for individual item
+@app.route('/menu/<int:item_id>/JSON/')
+def menuItemJSON(item_id):
+    menuItem = session.query(MenuItem).filter_by(id=item_id).one()
+    return jsonify(MenuItem=menuItem.serialize)
+
+
+
 @app.route('/')
 @app.route('/menu/')
 def menu():
