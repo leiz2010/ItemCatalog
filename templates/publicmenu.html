@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Yatta Teriyaki</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+</head>
+<body>
+<div class="container">
+    <div class="row">
+        <h1 class="text-center">Yatta Teriyaki</h1>
+
+    {% for i in categories %}
+    <div class="category text-center col-md-3">
+        <h3>{{i.category}}</h3>
+        <hr></hr>
+        {% for j in items %}
+            {% if j.category == i.category %}
+            <div class='nameAndPrice'>
+                <span><h4>{{j.name}}</h4></span>
+                <span><p>${{j.price}}</p></span>
+            </div>
+
+            <div class='description'>
+                <p>{{j.description}}</p>
+            </div>
+
+            <div class='editDeletePane'>
+                <a href='{{url_for('editMenuItem', category=i.category, item_id=j.id)}}'></a>
+                <a href='{{url_for('deleteMenuItem', category=i.category, item_id=j.id)}}'></a>
+            </div>
+            <hr></hr>
+            {% endif %}
+        {% endfor %}
+            <a href='{{url_for('newMenuItem', category=i.category)}}'></a>
+    </div>
+    {% endfor %}
+    </div>
+</div>
+</body>
+</html>

@@ -3,7 +3,7 @@ from sqlalchemy.orm import sessionmaker
 
 from database_setup import ItemType, Base, MenuItem
 
-engine = create_engine('sqlite:///menu.db')
+engine = create_engine('sqlite:///menuwithuser.db')
 # Bind the engine to the metadata of the Base class so that the
 # declaratives can be accessed through a DBSession instance
 Base.metadata.bind = engine
@@ -28,5 +28,8 @@ session.add(type1)
 session.add(type2)
 session.add(type3)
 session.add(type4)
+#session.commit()
+item = MenuItem(name="Beef Teriyaki", description="Beef wiht rice.", price="8.99", category="Entree")
 session.commit()
+
 print "added menu items!"

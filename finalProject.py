@@ -1,7 +1,7 @@
 from flask import Flask, render_template, request, redirect, url_for, flash, jsonify
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
-from database_setup import Base, ItemType, MenuItem
+from database_setup import Base, ItemType, MenuItem, User
 from flask import session as login_session
 import random, string
 from oauth2client.client import flow_from_clientsecrets
@@ -17,7 +17,7 @@ CLIENT_ID = json.loads(
     open('client_secrets.json', 'r').read())['web']['client_id']
 APPLICATION_NAME = "Restaurant Menu Application"
 
-engine = create_engine('sqlite:///menu.db')
+engine = create_engine('sqlite:///menuwithuser.db')
 Base.metadata.bind = engine
 
 DBSession = sessionmaker(bind=engine)
@@ -103,6 +103,12 @@ def gconnect():
     login_session['picture'] = data['picture']
     login_session['email'] = data['email']
 
+    # check if user already exists otherwise make a new one-time-use
+    user_id = getUserID(login_session['email'])
+    if not user_id:
+        user_id = createUser(login_session)
+    login_session['user_id'] = user_id
+
     output = ''
     output += '<h1>Welcome, '
     output += login_session['username']
@@ -147,6 +153,28 @@ def gdisconnect():
         response.headers['Content-Type'] = 'application/json'
         return response
 
+# User Helper Functions
+def createUser(login_session):
+    newUser = User(name=login_session['username'], email=login_session[
+                   'email'], picture=login_session['picture'])
+    session.add(newUser)
+    session.commit()
+    user = session.query(User).filter_by(email=login_session['email']).one()
+    return user.id
+
+
+def getUserInfo(user_id):
+    user = session.query(User).filter_by(id=user_id).one()
+    return user
+
+
+def getUserID(email):
+    try:
+        user = session.query(User).filter_by(email=email).one()
+        return user.id
+    except:
+        return None
+
 
 # XML for the entire menu
 @app.route('/menu/XML')
@@ -171,8 +199,13 @@ def menuItemJSON(item_id):
 def menu():
     # Display all menu items
     categories = session.query(ItemType).all()
+    for c in categories:
+        print c.category;
     items = session.query(MenuItem).all()
-    return render_template('menu.html', categories=categories, items=items);
+    if 'username' not in login_session:
+        return render_template('publicmenu.html', categories=categories, items=items);
+    else:
+        return render_template('menu.html', categories=categories, items=items);
 
 
 @app.route('/menu/<string:category>/new/',
@@ -186,7 +219,8 @@ def newMenuItem(category):
         newItem = MenuItem(name=request.form['name'],
             description=request.form['description'],
             price=request.form['price'],
-            category=category)
+            category=category,
+            user_id=login_session['user_id'])
         session.add(newItem)
         session.commit()
         flash("New menu item created")
