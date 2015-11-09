@@ -1,14 +1,16 @@
-from flask import Flask, render_template, request, redirect, url_for, flash, jsonify
+from flask import Flask, render_template, request
+from flask import redirect, url_for, flash, jsonify
+from flask import make_response
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from database_setup import Base, ItemType, MenuItem, User
 from flask import session as login_session
-import random, string
+import random
+import string
 from oauth2client.client import flow_from_clientsecrets
 from oauth2client.client import FlowExchangeError
 import httplib2
 import json
-from flask import make_response
 import requests
 
 app = Flask(__name__)
@@ -23,6 +25,7 @@ Base.metadata.bind = engine
 DBSession = sessionmaker(bind=engine)
 session = DBSession()
 
+
 # Create anti-forgery state token
 @app.route('/login')
 def showLogin():
@@ -31,6 +34,7 @@ def showLogin():
     login_session['state'] = state
     # return "The current session state is %s" % login_session['state']
     return render_template('login.html', STATE=state)
+
 
 @app.route('/gconnect', methods=['POST'])
 def gconnect():
@@ -83,7 +87,8 @@ def gconnect():
     stored_credentials = login_session.get('credentials')
     stored_gplus_id = login_session.get('gplus_id')
     if stored_credentials is not None and gplus_id == stored_gplus_id:
-        response = make_response(json.dumps('Current user is already connected.'), 200)
+        response = make_response(
+            json.dumps('Current user is already connected.'), 200)
         response.headers['Content-Type'] = 'application/json'
         return response
 
@@ -114,10 +119,12 @@ def gconnect():
     output += '!</h1>'
     output += '<img src="'
     output += login_session['picture']
-    output += ' " style = "width: 300px; height: 300px;border-radius: 150px;-webkit-border-radius: 150px;-moz-border-radius: 150px;"> '
+    output += (' " style = "width: 300px; height: 300px;border-radius:' +
+    ' 150px;-webkit-border-radius: 150px;-moz-border-radius: 150px;"> ')
     flash("you are now logged in as %s" % login_session['username'])
     print "done!"
     return output
+
 
 # Revoke the user's token and reset login session
 @app.route('/gdisconnect')
@@ -154,7 +161,8 @@ def fbconnect():
         'web']['app_id']
     app_secret = json.loads(
         open('fb_client_secrets.json', 'r').read())['web']['app_secret']
-    url = 'https://graph.facebook.com/oauth/access_token?grant_type=fb_exchange_token&client_id=%s&client_secret=%s&fb_exchange_token=%s' % (
+    url = ('https://graph.facebook.com/oauth/access_token?grant_type'+
+    '=fb_exchange_token&client_id=%s&client_secret=%s&fb_exchange_token=%s') % (
         app_id, app_secret, access_token)
     h = httplib2.Http()
     result = h.request(url, 'GET')[1]
@@ -163,8 +171,6 @@ def fbconnect():
     userinfo_url = "https://graph.facebook.com/v2.4/me"
     # strip expire tag from access token
     token = result.split("&")[0]
-
-
     url = 'https://graph.facebook.com/v2.4/me?%s&fields=name,id,email' % token
     h = httplib2.Http()
     result = h.request(url, 'GET')[1]
@@ -176,12 +182,15 @@ def fbconnect():
     login_session['email'] = data["email"]
     login_session['facebook_id'] = data["id"]
 
-    # The token must be stored in the login_session in order to properly logout, let's strip out the information before the equals sign in our token
+    # The token must be stored in the login_session in order to
+    # properly logout, let's strip out the information before
+    # the equals sign in our token
     stored_token = token.split("=")[1]
     login_session['access_token'] = stored_token
 
     # Get user picture
-    url = 'https://graph.facebook.com/v2.4/me/picture?%s&redirect=0&height=200&width=200' % token
+    url = ('https://graph.facebook.com/v2.4/me/' +
+    'picture?%s&redirect=0&height=200&width=200') % token
     h = httplib2.Http()
     result = h.request(url, 'GET')[1]
     data = json.loads(result)
@@ -201,7 +210,8 @@ def fbconnect():
     output += '!</h1>'
     output += '<img src="'
     output += login_session['picture']
-    output += ' " style = "width: 300px; height: 300px;border-radius: 150px;-webkit-border-radius: 150px;-moz-border-radius: 150px;"> '
+    output += (' " style = "width: 300px; height: 300px;border-radius:' +
+    ' 150px;-webkit-border-radius: 150px;-moz-border-radius: 150px;"> ')
 
     flash("Now logged in as %s" % login_session['username'])
     return output
@@ -212,7 +222,8 @@ def fbdisconnect():
     facebook_id = login_session['facebook_id']
     # The access token must me included to successfully logout
     access_token = login_session['access_token']
-    url = 'https://graph.facebook.com/%s/permissions?access_token=%s' % (facebook_id,access_token)
+    url = 'https://graph.facebook.com/%s/permissions?access_token=%s' % (
+        facebook_id, access_token)
     h = httplib2.Http()
     result = h.request(url, 'DELETE')[1]
     return "you have been logged out"
@@ -239,6 +250,7 @@ def getUserID(email):
         return user.id
     except:
         return None
+
 
 # Disconnect based on provider
 @app.route('/disconnect')
@@ -273,17 +285,20 @@ def menuXML():
     items = session.query(MenuItem).all()
     return render_template('menu.xml', items=items)
 
+
 # Json for the entire menu
 @app.route('/menu/JSON/')
 def menuJSON():
     items = session.query(MenuItem).all()
     return jsonify(MenuItems=[i.serialize for i in items])
 
+
 # Json endpoint for individual item
 @app.route('/menu/<int:item_id>/JSON/')
 def menuItemJSON(item_id):
     menuItem = session.query(MenuItem).filter_by(id=item_id).one()
     return jsonify(MenuItem=menuItem.serialize)
+
 
 @app.route('/')
 @app.route('/menu/')
@@ -293,20 +308,21 @@ def menu():
     items = session.query(MenuItem).all()
     if 'username' not in login_session:
         print "redirecting to public menu page."
-        return render_template('publicmenu.html', categories=categories, items=items);
+        return render_template(
+            'publicmenu.html', categories=categories, items=items)
     else:
-        return render_template('menu.html', categories=categories, items=items);
+        return render_template('menu.html', categories=categories, items=items)
 
 
-@app.route('/menu/<string:category>/new/',
-        methods=['GET', 'POST'])
+@app.route('/menu/<string:category>/new/', methods=['GET', 'POST'])
 def newMenuItem(category):
     #  Prompt the user to login
     if 'username' not in login_session:
         return redirect('/login')
     # Add new menu item to this category type
     if request.method == 'POST':
-        newItem = MenuItem(name=request.form['name'],
+        newItem = MenuItem(
+            name=request.form['name'],
             description=request.form['description'],
             price=request.form['price'],
             category=category,
@@ -319,8 +335,8 @@ def newMenuItem(category):
         return render_template('newitem.html', category=category)
 
 
-@app.route('/menu/<string:category>/<int:item_id>/edit/',
-        methods=['GET', 'POST'])
+@app.route(
+    '/menu/<string:category>/<int:item_id>/edit/', methods=['GET', 'POST'])
 def editMenuItem(category, item_id):
     #  Prompt the user to login
     if 'username' not in login_session:
@@ -341,11 +357,12 @@ def editMenuItem(category, item_id):
         flash("Menu item edited")
         return redirect(url_for('menu'))
     else:
-        return render_template('edititem.html', category=category, item=editedItem)
+        return render_template(
+            'edititem.html', category=category, item=editedItem)
 
 
-@app.route('/menu/<string:category>/<int:item_id>/delete/',
-        methods=['GET', 'POST'])
+@app.route(
+    '/menu/<string:category>/<int:item_id>/delete/', methods=['GET', 'POST'])
 def deleteMenuItem(category, item_id):
     #  Prompt the user to login
     if 'username' not in login_session:
