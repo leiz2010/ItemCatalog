@@ -83,8 +83,7 @@ def gconnect():
     stored_credentials = login_session.get('credentials')
     stored_gplus_id = login_session.get('gplus_id')
     if stored_credentials is not None and gplus_id == stored_gplus_id:
-        response = make_response(json.dumps('Current user is already connected.'),
-                                 200)
+        response = make_response(json.dumps('Current user is already connected.'), 200)
         response.headers['Content-Type'] = 'application/json'
         return response
 
@@ -98,7 +97,7 @@ def gconnect():
     answer = requests.get(userinfo_url, params=params)
 
     data = answer.json()
-
+    login_session['provider'] = 'google'
     login_session['username'] = data['name']
     login_session['picture'] = data['picture']
     login_session['email'] = data['email']
@@ -123,7 +122,7 @@ def gconnect():
 # Revoke the user's token and reset login session
 @app.route('/gdisconnect')
 def gdisconnect():
-        # Only disconnect a connected user.
+    # Only disconnect a connected user.
     credentials = login_session.get('credentials')
     if credentials is None:
         response = make_response(
@@ -134,19 +133,7 @@ def gdisconnect():
     url = 'https://accounts.google.com/o/oauth2/revoke?token=%s' % access_token
     h = httplib2.Http()
     result = h.request(url, 'GET')[0]
-
-    if result['status'] == '200':
-        # Reset the user's sesson.
-        del login_session['credentials']
-        del login_session['gplus_id']
-        del login_session['username']
-        del login_session['email']
-        del login_session['picture']
-
-        response = make_response(json.dumps('Successfully disconnected.'), 200)
-        response.headers['Content-Type'] = 'application/json'
-        return response
-    else:
+    if result['status'] != '200':
         # For whatever reason, the given token was invalid.
         response = make_response(
             json.dumps('Failed to revoke token for given user.', 400))
@@ -253,6 +240,32 @@ def getUserID(email):
     except:
         return None
 
+# Disconnect based on provider
+@app.route('/disconnect')
+def disconnect():
+    print "Entered Disconnect"
+    for i in login_session:
+        print i
+
+    if 'provider' in login_session:
+        if login_session['provider'] == 'google':
+            gdisconnect()
+            del login_session['gplus_id']
+            del login_session['credentials']
+        if login_session['provider'] == 'facebook':
+            fbdisconnect()
+            del login_session['facebook_id']
+        del login_session['username']
+        del login_session['email']
+        del login_session['picture']
+        del login_session['user_id']
+        del login_session['provider']
+        flash("You have successfully been logged out.")
+        return redirect(url_for('menu'))
+    else:
+        flash("You were not logged in")
+        return redirect(url_for('menu'))
+
 
 # XML for the entire menu
 @app.route('/menu/XML')
@@ -277,10 +290,9 @@ def menuItemJSON(item_id):
 def menu():
     # Display all menu items
     categories = session.query(ItemType).all()
-    for c in categories:
-        print c.category;
     items = session.query(MenuItem).all()
     if 'username' not in login_session:
+        print "redirecting to public menu page."
         return render_template('publicmenu.html', categories=categories, items=items);
     else:
         return render_template('menu.html', categories=categories, items=items);
@@ -348,29 +360,6 @@ def deleteMenuItem(category, item_id):
         return redirect(url_for('menu'))
     else:
         return render_template('deleteitem.html', item=deleteItem)
-
-
-# Disconnect based on provider
-@app.route('/disconnect')
-def disconnect():
-    if 'provider' in login_session:
-        if login_session['provider'] == 'google':
-            gdisconnect()
-            del login_session['gplus_id']
-            del login_session['credentials']
-        if login_session['provider'] == 'facebook':
-            fbdisconnect()
-            del login_session['facebook_id']
-        del login_session['username']
-        del login_session['email']
-        del login_session['picture']
-        del login_session['user_id']
-        del login_session['provider']
-        flash("You have successfully been logged out.")
-        return redirect(url_for('menu'))
-    else:
-        flash("You were not logged in")
-        return redirect(url_for('menu'))
 
 
 if __name__ == '__main__':

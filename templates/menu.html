@@ -9,19 +9,32 @@
 <body>
 <div class="container">
     <div class="row">
-        <h1 class="text-center">Yatta Teriyaki</h1>
-        {% with messages = get_flashed_messages() %}
-        {% if messages %}
+        <hr/>
+        <div class="col-md-4" style="margin:30px 0px 0px 0px">
+            {% with messages = get_flashed_messages() %}
+            {% if messages %}
 
-        <ul>
-        {% for message in messages %}
-          <li><strong>{{message}}</strong></li>
-          {% endfor %}
-        </ul>
-        {% endif %}
-        {% endwith %}
-        <hr></hr>
+            <ul>
+            {% for message in messages %}
+              <li><strong>{{message}}</strong></li>
+              {% endfor %}
+            </ul>
+            {% endif %}
+            {% endwith %}
+        </div>
+        <div class="col-md-4">
+        <h1 class="text-center">Yatta Teriyaki</h1>
+        </div>
+
+        <div class="col-md-4" >
+            <div class="col-md-2"></div>
+            <div class="col-md-1"></div>
+            <div class="col-md-1" style="margin:25px 0px 0px 100px">
+                <a href='{{url_for('disconnect')}}'><button type="button" class="btn btn-success btn-sm">Logout</button></a>
+            </div>
+        </div>
     </div>
+    <hr></hr>
 
     {% for i in categories %}
     <div class="category text-center col-md-3">

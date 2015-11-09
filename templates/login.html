@@ -53,16 +53,17 @@
        }
     </script>
 
-    <button>
-    <fb:login-button scope="public_profile,email"
-                    onlogin="sendTokenToServer();">
-    <a href='javascript:sendTokenToServer()'>Login with Facebook</a>
-    </fb:login-button>
-    </button>
+    <div style="display:inline-block">
+        <fb:login-button scope="public_profile,email"
+                        onlogin="sendTokenToServer()"
+                        data-size="xlarge";>
+        <a href='javascript:sendTokenToServer()'>Login</a>
+        </fb:login-button>
+    </div>
 <!--END FACEBOOK SIGN IN -->
 
 <!-- GOOGLE PLUS SIGN IN-->
-    <div id="signInButton">
+    <div id="signInButton" style="display:inline-block">
         <span class="g-signin"
         data-scope="openid email"
         data-clientid="425371895155-ah0en0ls7i9mb508b38aam5f9l3n2nl2.apps.googleusercontent.com"
@@ -105,5 +106,6 @@ function signInCallback(authResult) {
     }
     }
 </script>
+
 </body>
 </html>
