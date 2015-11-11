@@ -12,10 +12,11 @@ This project is a basic CURD application for a restaurant menu implemented with 
 3. Navigate to catalog directory.
 4. Enter python database_setup.py then hit enter.
 5. Enter python dummydata.py to create menuwithusers DATABASE with dummy data.
-6. Launch web browser then visit http://localhost:5000 to see Yatta Teriyaki menu page.
-7. Click on login to launch the login page with Facebook or GooglePlus.
-8. Login with a Facebook or GooglePlus accont.
-9. After login the user can edit, delete, or create new item.
+6. Enter python finalProject.py then hit enter.
+7. Launch web browser then visit http://localhost:5000 to see Yatta Teriyaki menu page.
+8. Click on login to launch the login page with Facebook or GooglePlus.
+9. Login with a Facebook or GooglePlus accont.
+10. After login the user can edit, delete, or create new item.
 
 ### Extra Feature:
 XML API endpoint:   

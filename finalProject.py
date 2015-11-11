@@ -93,7 +93,7 @@ def gconnect():
         return response
 
     # Store the access token in the session for later use.
-    login_session['credentials'] = credentials
+    login_session['credentials'] = credentials.access_token
     login_session['gplus_id'] = gplus_id
 
     # Get user info
@@ -136,7 +136,7 @@ def gdisconnect():
             json.dumps('Current user not connected.'), 401)
         response.headers['Content-Type'] = 'application/json'
         return response
-    access_token = credentials.access_token
+    access_token = credentials
     url = 'https://accounts.google.com/o/oauth2/revoke?token=%s' % access_token
     h = httplib2.Http()
     result = h.request(url, 'GET')[0]
@@ -373,7 +373,6 @@ def deleteMenuItem(category, item_id):
     if deleteItem.user_id != login_session['user_id']:
         flash("Please login as the creator of the item to delete!")
         return redirect('/login')
-        #return "<script>function deleteFail() {alert('You can only delete the #item you have created!');}</script><body onload='deleteFail()'>"
     if request.method == 'POST':
         print "Entered POST condition"
         session.delete(deleteItem)
