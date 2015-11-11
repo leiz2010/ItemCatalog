@@ -18,7 +18,18 @@
 <div class="row">
     <br/>
     <br/>
-<div class="col-md-4"></div>
+<div class="col-md-4" style="margin:5px 0px 0px 0px">
+    {% with messages = get_flashed_messages() %}
+    {% if messages %}
+
+    <ul>
+    {% for message in messages %}
+      <li><strong>{{message}}</strong></li>
+      {% endfor %}
+    </ul>
+    {% endif %}
+    {% endwith %}
+</div>
 <div class="col-md-2">
 <!-- FACEBOOK LOGIN -->
     <script>

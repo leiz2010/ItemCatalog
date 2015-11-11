@@ -369,6 +369,11 @@ def deleteMenuItem(category, item_id):
         return redirect('/login')
     # Delete this menu item in this category type
     deleteItem = session.query(MenuItem).filter_by(id=item_id).one()
+    # Verify the user is the owner of the db item entry
+    if deleteItem.user_id != login_session['user_id']:
+        flash("Please login as the creator of the item to delete!")
+        return redirect('/login')
+        #return "<script>function deleteFail() {alert('You can only delete the #item you have created!');}</script><body onload='deleteFail()'>"
     if request.method == 'POST':
         print "Entered POST condition"
         session.delete(deleteItem)
